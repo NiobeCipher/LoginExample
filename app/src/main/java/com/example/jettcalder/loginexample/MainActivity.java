@@ -1,17 +1,16 @@
 package com.example.jettcalder.loginexample;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
@@ -43,16 +42,11 @@ public class MainActivity extends AppCompatActivity {
             mUsername.setText(username);
 //            ------------------------------------------------------------------
             mListView = (ListView) findViewById(R.id.primary_listView);
-            mListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items));
-//            ------------------------------------------------------------------
-            mGo = (Button) findViewById(R.id.primary_btn_go);
-            mReset = (Button) findViewById(R.id.primary_btn_reset);
-            mGo.setOnClickListener(new View.OnClickListener() {
+            mListView.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items));
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onClick(View view) {
-                    mActivity = (TextInputLayout) findViewById(R.id.primary_activitynumber);
-                    numberChosen = parseInt(mActivity.getEditText().getText().toString().trim());
-                    switch (numberChosen){
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    switch (i) {
                         case 0: startActivity(new Intent(MainActivity.this, LoginActivity.class)); break;
                         case 1: startActivity(new Intent(MainActivity.this, ProfileActivity.class).putExtra("username", username)); break;
                         case 2: startActivity(new Intent(MainActivity.this, DummyActivity.class)); break;
@@ -60,13 +54,44 @@ public class MainActivity extends AppCompatActivity {
                         default:
                             Toast.makeText(MainActivity.this, "Pls choose the number from the list above!", Toast.LENGTH_LONG).show();
                     }
-                    mActivity.getEditText().setText("");
+                }
+            });
+//            ------------------------------------------------------------------
+            mGo = (Button) findViewById(R.id.primary_btn_go);
+            mReset = (Button) findViewById(R.id.primary_btn_reset);
+            mGo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mActivity = (TextInputLayout) findViewById(R.id.primary_activitynumber);
+                    if (!mActivity.getEditText().getText().toString().trim().isEmpty()) {
+                        numberChosen = parseInt(mActivity.getEditText().getText().toString().trim());
+                        switch (numberChosen) {
+                            case 0:
+                                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                break;
+                            case 1:
+                                startActivity(new Intent(MainActivity.this, ProfileActivity.class).putExtra("username", username));
+                                break;
+                            case 2:
+                                startActivity(new Intent(MainActivity.this, DummyActivity.class));
+                                break;
+                            case 3:
+                                startActivity(new Intent(MainActivity.this, ExampleActivity.class));
+                                break;
+                            default:
+                                Toast.makeText(MainActivity.this, "Pls choose the number from the list above!", Toast.LENGTH_LONG).show();
+                        }
+                        mActivity.getEditText().setText("");
+                    } else {
+                        Toast.makeText(MainActivity.this, "Pls Enter a valid number", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
             mReset.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mActivity.getEditText().setText("");
+
                 }
             });
         }
